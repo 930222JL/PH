@@ -1,0 +1,12 @@
+--cpu=Cortex-M4.fp
+".\objects\main.o"
+".\objects\drv_leds.o"
+".\objects\drv_tiempo.o"
+".\objects\hal_gpio_nrf.o"
+".\objects\hal_tiempo_nrf.o"
+".\objects\arm_startup_nrf52840.o"
+".\objects\system_nrf52.o"
+--library_type=microlib --strict --scatter ".\Objects\blink_nrf.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\blink_nrf.map" -o .\Objects\blink_nrf.axf

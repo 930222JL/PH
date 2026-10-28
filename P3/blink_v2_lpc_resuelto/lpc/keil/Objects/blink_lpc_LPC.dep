@@ -1,0 +1,40 @@
+Dependencies for Project 'blink_lpc', Target 'LPC': (DO NOT MODIFY !)
+F (..\..\src\main.c)(0x6AD9EAA2)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections -I ../../src -I ../src_lpc-IC:\Programas-Practicas\Simuladores\Keil\ARM\RV31\INC-IC:\Programas-Practicas\Simuladores\Keil\ARM\CMSIS\Include-IC:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips-D__UVISION_VERSION="526" -DLPC2105_simulador-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdbool.h)(0x599F2F9E)
+I (..\..\src\hal_gpio.h)(0x68D41576)
+I (..\..\src\drv_leds.h)(0x68D41406)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
+I (..\..\src\drv_tiempo.h)(0x68D43996)
+F (..\..\src\drv_leds.c)(0x68CAE86E)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections -I ../../src -I ../src_lpc-IC:\Programas-Practicas\Simuladores\Keil\ARM\RV31\INC-IC:\Programas-Practicas\Simuladores\Keil\ARM\CMSIS\Include-IC:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips-D__UVISION_VERSION="526" -DLPC2105_simulador-o .\objects\drv_leds.o --omf_browse .\objects\drv_leds.crf --depend .\objects\drv_leds.d)
+I (..\..\src\hal_gpio.h)(0x68D41576)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (..\..\src\drv_leds.h)(0x68D41406)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
+I (..\..\src\board.h)(0x66F3293C)
+I (../src_lpc/board_lpc.h)(0x68CAD8FA)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
+I (../src_lpc/reserva_gpio_lpc2105.h)(0x66F32AA2)
+F (..\..\src\drv_leds.h)(0x68D41406)()
+F (..\..\src\drv_tiempo.c)(0x6AD9F338)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections -I ../../src -I ../src_lpc-IC:\Programas-Practicas\Simuladores\Keil\ARM\RV31\INC-IC:\Programas-Practicas\Simuladores\Keil\ARM\CMSIS\Include-IC:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips-D__UVISION_VERSION="526" -DLPC2105_simulador-o .\objects\drv_tiempo.o --omf_browse .\objects\drv_tiempo.crf --depend .\objects\drv_tiempo.d)
+I (..\..\src\drv_tiempo.h)(0x68D43996)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdbool.h)(0x599F2F9E)
+I (..\..\src\hal_tiempo.h)(0x68F74AB6)
+F (..\..\src\drv_tiempo.h)(0x68D43996)()
+F (..\..\src\hal_gpio.h)(0x68D41576)()
+F (..\..\src\hal_tiempo.h)(0x68F74AB6)()
+F (..\..\src\board.h)(0x66F3293C)()
+F (..\src_lpc\board_lpc.h)(0x68CAD8FA)()
+F (..\src_lpc\hal_gpio_lpc.c)(0x68F74430)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections -I ../../src -I ../src_lpc-IC:\Programas-Practicas\Simuladores\Keil\ARM\RV31\INC-IC:\Programas-Practicas\Simuladores\Keil\ARM\CMSIS\Include-IC:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips-D__UVISION_VERSION="526" -DLPC2105_simulador-o .\objects\hal_gpio_lpc.o --omf_browse .\objects\hal_gpio_lpc.crf --depend .\objects\hal_gpio_lpc.d)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
+I (../../src/hal_gpio.h)(0x68D41576)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+F (..\src_lpc\hal_tiempo_lpc.c)(0x68F74A8C)(--c99 --gnu -c --cpu ARM7TDMI -D__EVAL -g -O3 -Otime --apcs=interwork --split_sections -I ../../src -I ../src_lpc-IC:\Programas-Practicas\Simuladores\Keil\ARM\RV31\INC-IC:\Programas-Practicas\Simuladores\Keil\ARM\CMSIS\Include-IC:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips-D__UVISION_VERSION="526" -DLPC2105_simulador-o .\objects\hal_tiempo_lpc.o --omf_browse .\objects\hal_tiempo_lpc.crf --depend .\objects\hal_tiempo_lpc.d)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips\LPC210x.H)(0x559D2F68)
+I (../../src/hal_tiempo.h)(0x68F74AB6)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdint.h)(0x599F2F9E)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stdbool.h)(0x599F2F9E)
+I (C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\include\stddef.h)(0x599F2F9C)
+F (..\src_lpc\reserva_gpio_lpc2105.h)(0x66F32AA2)()
+F (..\src_lpc\Startup.s)(0x67193BAA)(--cpu ARM7TDMI --pd "__EVAL SETA 1" -g --apcs=interwork -IC:\Programas-Practicas\Simuladores\Keil\ARM\RV31\INC-IC:\Programas-Practicas\Simuladores\Keil\ARM\CMSIS\Include-IC:\Programas-Practicas\Simuladores\Keil\ARM\INC\Philips--pd "__UVISION_VERSION SETA 526"--list .\listings\startup.lst --xref -o .\objects\startup.o --depend .\objects\startup.d)
