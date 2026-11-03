@@ -67,7 +67,7 @@ uint64_t hal_tiempo_actual_tick64(void) {
 	lo = leer_contador();
 	hi = s_overflows_t1;
 	if (NRF_TIMER1->EVENTS_COMPARE[0] != 0 && lo < 0x80000000u) {	/*si ha saltado interrupcion y el valor de tick es menor que la mitad no se ha servido 
-																																*/la interrupcion
+																																la interrupcion*/
 		hi++;
 	}
 	__set_PRIMASK(primask);							// devolvemos las interrupciones al estado en el que estaban antes de desactivarlas

@@ -24,6 +24,7 @@
 #include "hal_gpio.h"
 #include "drv_leds.h"
 #include "drv_tiempo.h"
+#include "drv_consumo.h"
 
 /* Constante de retardo en milisegundos */
 #define RETARDO_MS 500u 		 /* ejemplo: medio segundo */
@@ -66,6 +67,27 @@ static void blink_v2(LED_id_t id) {
         siguiente_activacion += RETARDO_MS;     /* calcular la siguiente activación */
         drv_tiempo_esperar_hasta_ms(siguiente_activacion);
         (void)drv_led_conmutar(id);
+
+        /* Aquí podrían añadirse otras tareas periódicas */
+    }
+}
+
+void leds_c(uint32_t id, uint32_t ms){
+	drv_led_conmutar(id);
+}
+
+static void blink_v3(LED_id_t id) {
+    Tiempo_ms_t siguiente_activacion;	
+
+    /* Encender LED inicial */
+    drv_led_establecer(id, LED_ON);
+
+    /* Tomar tiempo de referencia */
+    drv_tiempo_periodico_ms(500,leds_c,id);
+	
+    /* Bucle principal: conmutar con temporizador */
+    while (true) {
+        drv_consumo_esperar();
 
         /* Aquí podrían añadirse otras tareas periódicas */
     }
