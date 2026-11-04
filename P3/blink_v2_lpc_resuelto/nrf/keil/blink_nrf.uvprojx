@@ -435,7 +435,32 @@
             <File>
               <FileName>drv_consumo.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\drv_consumo.h</FilePath>
+              <FilePath>..\..\src\drv_consumo.h</FilePath>
+            </File>
+            <File>
+              <FileName>drv_monitor.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\drv_monitor.h</FilePath>
+            </File>
+            <File>
+              <FileName>drv_monitor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\drv_monitor.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_evento_t.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\rt_evento_t.h</FilePath>
+            </File>
+            <File>
+              <FileName>rt_fifo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\rt_fifo.h</FilePath>
+            </File>
+            <File>
+              <FileName>rt_fifo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\rt_fifo.c</FilePath>
             </File>
           </Files>
         </Group>

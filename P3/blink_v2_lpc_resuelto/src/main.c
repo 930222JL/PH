@@ -20,11 +20,14 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "board.h"
 
 #include "hal_gpio.h"
 #include "drv_leds.h"
 #include "drv_tiempo.h"
 #include "drv_consumo.h"
+#include "rt_fifo.h"
+#include "rt_fifo_test.h"
 
 /* Constante de retardo en milisegundos */
 #define RETARDO_MS 500u 		 /* ejemplo: medio segundo */
@@ -77,8 +80,6 @@ void leds_c(uint32_t id, uint32_t ms){
 }
 
 static void blink_v3(LED_id_t id) {
-    Tiempo_ms_t siguiente_activacion;	
-
     /* Encender LED inicial */
     drv_led_establecer(id, LED_ON);
 
@@ -88,6 +89,31 @@ static void blink_v3(LED_id_t id) {
     /* Bucle principal: conmutar con temporizador */
     while (true) {
         drv_consumo_esperar();
+
+        /* Aquí podrían añadirse otras tareas periódicas */
+    }
+}
+
+static void blink_v4(LED_id_t id) {
+		EVENTO_T EV_ID_evento;
+		uint32_t EV_auxData;
+		Tiempo_us_t EV_TS;
+		
+    rt_FIFO_inicializar(MONITOR4);
+	
+		/* Encender LED inicial */
+    drv_led_establecer(id, LED_ON);
+
+    /* Tomar tiempo de referencia */
+    drv_tiempo_periodico_ms(500,rt_FIFO_encolar,ev_T_PERIODICO);
+	
+    /* Bucle principal: conmutar con temporizador */
+    while (true) {
+				if(rt_FIFO_extraer(&EV_ID_evento,&EV_auxData,&EV_TS)){
+					if(ev_T_PERIODICO)drv_led_conmutar(id);
+				}else{
+					drv_consumo_esperar();
+				}
 
         /* Aquí podrían añadirse otras tareas periódicas */
     }
