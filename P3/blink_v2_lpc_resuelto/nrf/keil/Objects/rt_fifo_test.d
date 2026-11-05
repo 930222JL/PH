@@ -1,0 +1,9 @@
+.\objects\rt_fifo_test.o: ..\..\src\rt_fifo_test.c
+.\objects\rt_fifo_test.o: ..\..\src\rt_fifo.h
+.\objects\rt_fifo_test.o: ..\..\src\rt_evento_t.h
+.\objects\rt_fifo_test.o: ..\..\src\drv_tiempo.h
+.\objects\rt_fifo_test.o: C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\rt_fifo_test.o: C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\rt_fifo_test.o: ..\..\src\rt_fifo_test.h
+.\objects\rt_fifo_test.o: ..\..\src\board.h
+.\objects\rt_fifo_test.o: ../src_nrf/board_nrf52840dk.h

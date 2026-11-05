@@ -312,7 +312,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>4</Optim>
             <oTime>1</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -461,6 +461,16 @@
               <FileName>rt_fifo.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\rt_fifo.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_fifo_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\rt_fifo_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>rt_fifo_test.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\rt_fifo_test.h</FilePath>
             </File>
           </Files>
         </Group>

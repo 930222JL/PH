@@ -7,6 +7,7 @@
  * Tiempo en ticks = vueltas * 2^32 + contador.
  */
 #include <nrf.h>
+#include <stddef.h>
 #include "hal_tiempo.h"
 
 #define TICKS_PER_US      1u                 /* 16 MHz / 2^4 = 1 MHz */
@@ -67,7 +68,7 @@ uint64_t hal_tiempo_actual_tick64(void) {
 	lo = leer_contador();
 	hi = s_overflows_t1;
 	if (NRF_TIMER1->EVENTS_COMPARE[0] != 0 && lo < 0x80000000u) {	/*si ha saltado interrupcion y el valor de tick es menor que la mitad no se ha servido 
-																																*/la interrupcion
+																																la interrupcion*/
 		hi++;
 	}
 	__set_PRIMASK(primask);							// devolvemos las interrupciones al estado en el que estaban antes de desactivarlas
@@ -81,14 +82,14 @@ static void (*s_cb)() = 0;
 void TIMER0_IRQHandler(void) {
 	if(s_cb) s_cb();
 	volatile uint32_t dummy;
-	NRF_TIMER1->EVENTS_COMPARE[0] = 0;
-	dummy = NRF_TIMER1->EVENTS_COMPARE[0];   /* relectura para asegurar el borrado */
+	NRF_TIMER0->EVENTS_COMPARE[0] = 0;
+	dummy = NRF_TIMER0->EVENTS_COMPARE[0];   /* relectura para asegurar el borrado */
 	(void)dummy;
 	                        /* una vuelta completa de 2^32 ticks */
 }
 
 static void hal_tiempo_periodico_set_callback(void (*cb)()){
-	s_cb=ch;
+	s_cb=cb;
 }
 
 static void hal_tiempo_periodico_config_tick(uint32_t periodo_en_tick){

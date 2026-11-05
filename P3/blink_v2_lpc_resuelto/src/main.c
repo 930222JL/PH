@@ -26,6 +26,7 @@
 #include "drv_leds.h"
 #include "drv_tiempo.h"
 #include "drv_consumo.h"
+#include "drv_monitor.h"
 #include "rt_fifo.h"
 #include "rt_fifo_test.h"
 
@@ -75,7 +76,7 @@ static void blink_v2(LED_id_t id) {
     }
 }
 
-void leds_c(uint32_t id, uint32_t ms){
+void leds_c(uint32_t id){
 	drv_led_conmutar(id);
 }
 
@@ -134,6 +135,9 @@ int main(void){
 	
 	/* Configurar LEDs (IDs válidos: 1..num_leds) */
 	Num_Leds = drv_leds_iniciar();
+	drv_monitor_iniciar();
+	drv_consumo_iniciar(MONITOR3);
+	
 	
 	if (Num_Leds > 0){
 			/* Sesión 1: parpadeo por lazo ocupado */
@@ -141,7 +145,10 @@ int main(void){
 
 			/* Sesión 2: temporizador (cuando esté disponible)
 			 */
-			blink_v2((LED_id_t)2);
+			//blink_v2((LED_id_t)2);
+			//blink_v3((LED_id_t)3);
+			blink_v4((LED_id_t)4);
+			//test();
     }
 
     /* En sistemas empotrados normalmente no se retorna */

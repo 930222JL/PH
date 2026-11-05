@@ -44,8 +44,24 @@ Tiempo_ms_t drv_tiempo_esperar_hasta_ms(Tiempo_ms_t ms){
 	return ahora;
 }
 
-void drv_tiempo_periodico_ms(Tiempo_ms_t ms, void(*funcion_callback_app)(),uint32_t ID_evento){
-	uint32_t periodo=(uint32_t) ms*ticks_us*1000;
-	id_evento=ID_evento;
-	hal_tiempo_reloj_periodico_tick(periodo,funcion_callback_app);
+
+static volatile uint32_t id_evento;
+static void (*s_callback_app)(uint32_t) = 0;
+
+/* Funcion que ve el HAL: sin parametros. Se ejecuta en la ISR de TIMER0 */
+static void callback_intermedio(void){
+	if (s_callback_app) s_callback_app(id_evento);
+}
+
+void drv_tiempo_periodico_ms(Tiempo_ms_t ms, void(*funcion_callback_app)(uint32_t), uint32_t ID_evento){
+	uint32_t periodo = (uint32_t)ms * ticks_us * 1000u;
+
+	id_evento = ID_evento;
+	s_callback_app = funcion_callback_app;
+
+	if (ms == 0 || funcion_callback_app == 0){
+		hal_tiempo_reloj_periodico_tick(0, 0);                   /* deshabilitar */
+	} else {
+		hal_tiempo_reloj_periodico_tick(periodo, callback_intermedio);
+	}
 }

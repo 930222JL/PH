@@ -12,5 +12,6 @@
 .\objects\hal_tiempo_nrf.o: C:\Programas-Practicas\Simuladores\Keil\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\8.44.1\Device\Include\nrf51_to_nrf52840.h
 .\objects\hal_tiempo_nrf.o: C:\Programas-Practicas\Simuladores\Keil\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\8.44.1\Device\Include\nrf52_to_nrf52840.h
 .\objects\hal_tiempo_nrf.o: C:\Programas-Practicas\Simuladores\Keil\ARM\PACK\NordicSemiconductor\nRF_DeviceFamilyPack\8.44.1\Device\Include\compiler_abstraction.h
+.\objects\hal_tiempo_nrf.o: C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\Bin\..\include\stddef.h
 .\objects\hal_tiempo_nrf.o: ../../src/hal_tiempo.h
 .\objects\hal_tiempo_nrf.o: C:\Programas-Practicas\Simuladores\Keil\ARM\ARMCC\Bin\..\include\stdbool.h

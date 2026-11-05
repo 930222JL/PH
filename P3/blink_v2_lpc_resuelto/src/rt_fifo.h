@@ -8,7 +8,7 @@
 
 void rt_FIFO_inicializar(uint32_t monitor_overflow);
 
-void rt_FIFO_encolar(uint32_t ID_evento, uint32_t auxData);
+void rt_FIFO_encolar(EVENTO_T ID_evento, uint32_t auxData);
 
 uint8_t rt_FIFO_extraer(EVENTO_T *ID_evento,uint32_t *auxData,Tiempo_us_t *TS);
 

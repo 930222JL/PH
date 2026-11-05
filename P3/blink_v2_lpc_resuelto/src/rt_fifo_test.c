@@ -10,7 +10,7 @@ static uint32_t test_circular(void){
 	
 	Tiempo_us_t t_anterior;
 	
-	rt_FIFO_inicializar(MONITOR2);
+	rt_FIFO_inicializar(MONITOR4);
 	
 	for(uint16_t i=0;i<5*RT_FIFO_TAM;i++){
 		rt_FIFO_encolar(ev_PULSAR_BOTON,i);
@@ -37,7 +37,7 @@ static uint32_t test_circular(void){
 }
 
 static uint32_t test_overflow(void){
-	rt_FIFO_inicializar(MONITOR2);
+	rt_FIFO_inicializar(MONITOR4);
 	for(uint16_t i=0;i<=RT_FIFO_TAM;i++){
 		rt_FIFO_encolar(ev_PULSAR_BOTON,i);
 	}
@@ -49,5 +49,7 @@ void test(void){
 	uint16_t ok=test_circular();
 	ok=test_overflow();
 }
+
+
 	
 	
