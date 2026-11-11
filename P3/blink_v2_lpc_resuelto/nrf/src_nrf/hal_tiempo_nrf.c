@@ -92,29 +92,58 @@ static void hal_tiempo_periodico_set_callback(void (*cb)()){
 	s_cb=cb;
 }
 
-static void hal_tiempo_periodico_config_tick(uint32_t periodo_en_tick){
-	NRF_TIMER0->TASKS_STOP  = 1;
-	if(periodo_en_tick==0)return;
-	NRF_TIMER0->MODE      = TIMER_MODE_MODE_Timer << TIMER_MODE_MODE_Pos;	//para contar pulsos de reloj
-	NRF_TIMER0->BITMODE   = TIMER_BITMODE_BITMODE_32Bit << TIMER_BITMODE_BITMODE_Pos;	//contador a 32 bits
-	NRF_TIMER0->PRESCALER = 4 << TIMER_PRESCALER_PRESCALER_Pos;      /* 16 MHz / 2^4 = 1 MHz */
-	NRF_TIMER0->CC[0] = periodo_en_tick-1;
-	NRF_TIMER0->SHORTS   = TIMER_SHORTS_COMPARE0_CLEAR_Enabled << TIMER_SHORTS_COMPARE0_CLEAR_Pos;
-	NRF_TIMER0->INTENSET = TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
+static void hal_tiempo_periodico_config_tick(uint32_t periodo_en_tick) {
+    /* Detiene el temporizador antes de modificar su configuración */
+    NRF_TIMER0->TASKS_STOP = 1;
+
+    /* Si el periodo es 0, cancela la configuración (periodo inválido) */
+    if (periodo_en_tick == 0) {
+        return;
+    }
+
+    /* Configura el temporizador en modo Timer (cuenta pulsos de reloj interno) */
+    NRF_TIMER0->MODE = TIMER_MODE_MODE_Timer << TIMER_MODE_MODE_Pos;
+
+    /* Define el tamaño del contador en 32 bits (rango: 0 a 2^32 - 1) */
+    NRF_TIMER0->BITMODE = TIMER_BITMODE_BITMODE_32Bit << TIMER_BITMODE_BITMODE_Pos;
+
+    /* Configura el prescalador: Frecuencia = 16 MHz / (2^PRESCALER) -> 16 MHz / 16 = 1 MHz (1 tick = 1 µs) */
+    NRF_TIMER0->PRESCALER = 4 << TIMER_PRESCALER_PRESCALER_Pos;
+
+    /* Ajusta el valor del registro de comparación. Se resta 1 porque la cuenta empieza en 0 */
+    NRF_TIMER0->CC[0] = periodo_en_tick - 1;
+
+    /* Shortcut (SHORTS): Reinicia automáticamente el contador a 0 al alcanzar CC[0] */
+    NRF_TIMER0->SHORTS = TIMER_SHORTS_COMPARE0_CLEAR_Enabled << TIMER_SHORTS_COMPARE0_CLEAR_Pos;
+
+    /* Habilita la generación de interrupción por el evento COMPARE[0] */
+    NRF_TIMER0->INTENSET = TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
 }
 	
 
-static void hal_tiempo_periodico_enable(bool enable){
-	if(enable){
-		NRF_TIMER0->TASKS_CLEAR = 1;
-		NRF_TIMER0->INTENSET = TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
-		NVIC_EnableIRQ(TIMER0_IRQn);
-		NRF_TIMER0->TASKS_START = 1;
-	}else{
-		NRF_TIMER0->TASKS_STOP  = 1;
-		NRF_TIMER0->INTENCLR = 0xFFFFFFFFu;
-		NVIC_ClearPendingIRQ(TIMER0_IRQn);
-	}
+static void hal_tiempo_periodico_enable(bool enable) {
+    if (enable) {
+        /* Reinicia el contador a cero */
+        NRF_TIMER0->TASKS_CLEAR = 1;
+
+        /* Asegura que la interrupción del evento COMPARE[0] esté habilitada */
+        NRF_TIMER0->INTENSET = TIMER_INTENSET_COMPARE0_Enabled << TIMER_INTENSET_COMPARE0_Pos;
+
+        /* Habilita la interrupción en el controlador NVIC del procesador ARM */
+        NVIC_EnableIRQ(TIMER0_IRQn);
+
+        /* Inicia la cuenta del temporizador */
+        NRF_TIMER0->TASKS_START = 1;
+    } else {
+        /* Detiene la cuenta del temporizador */
+        NRF_TIMER0->TASKS_STOP = 1;
+
+        /* Deshabilita todas las fuentes de interrupción del TIMER0 */
+        NRF_TIMER0->INTENCLR = 0xFFFFFFFFu;
+
+        /* Limpia cualquier interrupción pendiente en el NVIC */
+        NVIC_ClearPendingIRQ(TIMER0_IRQn);
+    }
 }
 
 void hal_tiempo_reloj_periodico_tick(uint32_t periodo_en_tick, void (*funcion_callback_drv)(void)){
@@ -127,7 +156,7 @@ void hal_tiempo_reloj_periodico_tick(uint32_t periodo_en_tick, void (*funcion_ca
     /* 3) Configurar periodo (no arranca el temporizador) */
     hal_tiempo_periodico_config_tick(periodo_en_tick);
 
-    /* 4) Habilitar si hay periodo v�lido y callback no nulo; deshabilitar en caso contrario */
+    /* 4) Habilitar si hay periodo válido y callback no nulo; deshabilitar en caso contrario */
     if (periodo_en_tick != 0u && funcion_callback_drv != NULL) {
         hal_tiempo_periodico_enable(true);
     } else {
