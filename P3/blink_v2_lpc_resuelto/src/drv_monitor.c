@@ -12,9 +12,31 @@ void drv_monitor_iniciar(void){
 }
 
 void drv_monitor_marcar(uint32_t id){
-	hal_gpio_escribir(s_monitores[id],1);
+	int i;
+	switch(id){
+		case MONITOR1:
+			i=0;
+		case MONITOR2:
+			i=1;
+		case MONITOR3:
+			i=2;
+		case MONITOR4:
+			i=3;
+	}
+	hal_gpio_escribir(s_monitores[i],1);
 }
 
 void drv_monitor_desmarcar(uint32_t id){
-	hal_gpio_escribir(s_monitores[id],0);
+	int i;
+	switch(id){
+		case MONITOR1:
+			i=0;
+		case MONITOR2:
+			i=1;
+		case MONITOR3:
+			i=2;
+		case MONITOR4:
+			i=3;
+	}
+	hal_gpio_escribir(s_monitores[i],0);
 }

@@ -4,7 +4,7 @@
 typedef enum{
 	ev_VOID =0,
 	ev_T_PERIODICO = 1,
-	ev_PULSAR_BOTON = 3,
+	ev_PULSAR_BOTON = 2,
 } EVENTO_T;
 
 #define EVENT_TYPES 3
