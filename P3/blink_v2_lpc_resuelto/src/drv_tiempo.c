@@ -65,3 +65,4 @@ void drv_tiempo_periodico_ms(Tiempo_ms_t ms, void(*funcion_callback_app)(uint32_
 		hal_tiempo_reloj_periodico_tick(periodo, callback_intermedio);  // Configura la alarma periodica del HAL con el callback intermedio
 	}
 }
+
