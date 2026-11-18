@@ -9,6 +9,6 @@ void rt_GE_iniciar();
 
 void rt_GE_lanzador();
 
-void rt_GE_actualizar(EVENTO_T ID_evento, uint16_t auxiliar);
+void rt_GE_actualizar(EVENTO_T ID_evento, uint32_t auxiliar);
 
 #endif

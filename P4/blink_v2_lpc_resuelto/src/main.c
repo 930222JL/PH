@@ -20,6 +20,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdbool.h>
 #include "board.h"
 
 #include "hal_gpio.h"
@@ -27,6 +28,9 @@
 #include "drv_tiempo.h"
 #include "drv_consumo.h"
 #include "drv_monitor.h"
+#include "svc_GE.h"
+#include "rt_GE.h"
+#include "drv_botones.h"
 #include "rt_fifo.h"
 #include "rt_fifo_test.h"
 
@@ -36,6 +40,9 @@
 /* Prototipos */
 static void blink_v1(LED_id_t id);
 static void blink_v2(LED_id_t id);
+
+static volatile bool pulsado=false;
+static volatile uint16_t counter_sequence[4]={1,3,2,4};
 
 /* *****************************************************************************
  * BLINK v1: parpadeo de un LED conmutando on/off.
@@ -95,6 +102,24 @@ static void blink_v3(LED_id_t id) {
     }
 }
 
+static void blink_v3_bis(LED_id_t id) {
+    /* Encender LED inicial */
+    drv_led_establecer(id, LED_ON);
+
+    /* Tomar tiempo de referencia */
+    drv_tiempo_periodico_ms(500,leds_c,id);
+	
+    /* Bucle principal: conmutar con temporizador */
+		uint16_t n=0;
+    while (n<20) {
+				n++;
+        drv_consumo_esperar();
+
+        /* Aquí podrían añadirse otras tareas periódicas */
+    }
+		drv_consumo_dormir();
+}
+
 static void blink_v4(LED_id_t id) {
 		EVENTO_T EV_ID_evento;
 		uint32_t EV_auxData;
@@ -118,6 +143,23 @@ static void blink_v4(LED_id_t id) {
 
         /* Aquí podrían añadirse otras tareas periódicas */
     }
+}
+
+static void pulsar(){
+	pulsado=true;
+}
+
+static void bit_counter_strike(){
+	svc_GE_suscribir(ev_PULSAR_BOTON,0,pulsar);
+	uint16_t n=0;
+	while(1){
+		if(n>=4)n=0;
+		drv_led_establecer(counter_sequence[n],1);
+		while(!pulsado);
+		pulsado=false;
+		drv_led_establecer(counter_sequence[n],0);
+		n++;
+	}
 }
 
 /* *****************************************************************************

@@ -1,5 +1,6 @@
 #include "rt_GE.h"
 #include "svc_GE.h"
+#include "svc_alarmas.h"
 #include "rt_fifo.h"
 #include "rt_evento_t.h"
 #include "drv_consumo.h"
@@ -26,6 +27,9 @@ void rt_GE_iniciar(){
 				suscripciones[i][j].prioridad=0;
 			}
 	}
+	svc_GE_suscribir(ev_INACTIVIDAD,0,rt_GE_actualizar);
+	svc_GE_suscribir(ev_PULSAR_BOTON,0,rt_GE_actualizar);
+	svc_alarma_activar(svc_alarma_codificar(false,10000,0),ev_INACTIVIDAD,0);
 }
 
 void rt_GE_lanzador(){
@@ -48,10 +52,10 @@ void rt_GE_lanzador(){
 
 void rt_GE_actualizar(EVENTO_T ID_evento, uint32_t auxiliar){
 	switch(ID_evento){
-		case ev_usuario:
-			
 		case ev_INACTIVIDAD:
 			drv_consumo_dormir();
+		default:
+			svc_alarma_activar(svc_alarma_codificar(false,10000,0),ev_INACTIVIDAD,0);
 	}
 }
 

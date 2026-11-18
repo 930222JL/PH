@@ -40,6 +40,7 @@ void drv_botones_pulsar_boton(uint32_t pin,uint32_t auxData){
 	}
 	if(n<BUTTONS_NUMBER){
 		botones[n].pulsado=true;
+		f_cb();
 		drv_botones_actualizar(ev_PULSAR_BOTON,auxData);
 	}
 }
