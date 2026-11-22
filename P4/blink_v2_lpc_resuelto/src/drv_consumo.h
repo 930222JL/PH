@@ -1,6 +1,5 @@
 #ifndef DRV_CONSUMO_H
 #define DRV_CONSUMO_H
-#include <stdint.h>
 
 void drv_consumo_iniciar(void);
 	

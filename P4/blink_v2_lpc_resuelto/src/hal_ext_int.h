@@ -3,13 +3,14 @@
 #define HAL_EXT_INT_H
 
 #include <stdint.h>
+#include "rt_evento_t.h"
 
 /**
  * @brief Inicializa el periférico GPIOTE y la ISR.
  * @param f_callback_isr Puntero a la función (drv_botones_callback)
  * que debe llamar la ISR cuando ocurra un evento.
  */
-void hal_ext_int_iniciar(void (*f_callback_isr)(uint32_t pin));
+void hal_ext_int_iniciar(void (*f_callback_isr)(EVENTO_T ID_evento,uint32_t pin));
 
 /**
  * @brief Configura un pin para que genere una interrupción.

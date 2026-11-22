@@ -47,30 +47,32 @@ uint32_t svc_alarma_codificar(bool periodico,Tiempo_ms_t retardo_ms,uint8_t flag
 void svc_alarma_activar(uint32_t alarma_flags,EVENTO_T ID_evento,uint32_t auxData){
 	uint32_t tiempo=alarma_flags&ALARMA_RETARDO_MASK;
 	bool activa= tiempo!=0;
+	int libre=0;
 	uint16_t n=0;
 	while(n<svc_ALARMAS_MAX){
 		if(s_alarmas[n].activa){
 			if(s_alarmas[n].ID_evento==ID_evento){
 				s_alarmas[n].activa=activa;
 				s_alarmas[n].contador=0;
-				s_alarmas[n].tiempo=tiempo;
+				s_alarmas[n].tiempo=tiempo/svc_PERIODO_ALARMA;
 				s_alarmas[n].flags=(alarma_flags>>ALARMA_FLAGS_POS)&ALARMA_FLAGS_MASK;
 				s_alarmas[n].periodica=alarma_flags >> ALARMA_FLAGS_POS;
 				s_alarmas[n].auxData=auxData;
 				return;
 			}
-		}else{
-			break;
+		}else if(libre==0){
+			libre=n;
 		}
 		n++;
 	}
 	if(n==svc_ALARMAS_MAX) overflow();
-	s_alarmas[n].activa=activa;
-	s_alarmas[n].tiempo=tiempo;
-	s_alarmas[n].contador=0;
-	s_alarmas[n].flags=(alarma_flags>>ALARMA_FLAGS_POS)&ALARMA_FLAGS_MASK;
-	s_alarmas[n].periodica=alarma_flags >> ALARMA_FLAGS_POS;
-	s_alarmas[n].auxData=auxData;
+	s_alarmas[libre].ID_evento=ID_evento;
+	s_alarmas[libre].activa=activa;
+	s_alarmas[libre].tiempo=tiempo;
+	s_alarmas[libre].contador=0;
+	s_alarmas[libre].flags=(alarma_flags>>ALARMA_FLAGS_POS)&ALARMA_FLAGS_MASK;
+	s_alarmas[libre].periodica=alarma_flags >> ALARMA_FLAGS_POS;
+	s_alarmas[libre].auxData=auxData;
 }
 
 void svc_alarma_actualizar(EVENTO_T evento,uint32_t aux){

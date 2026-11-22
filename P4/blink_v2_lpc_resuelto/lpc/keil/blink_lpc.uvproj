@@ -551,6 +551,36 @@
               <FileType>5</FileType>
               <FilePath>..\..\src\hal_ext_int.h</FilePath>
             </File>
+            <File>
+              <FileName>drv_watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\drv_watchdog.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_watchdog.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\drv_watchdog.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wdt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_wdt.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_irq.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_irq.h</FilePath>
+            </File>
+            <File>
+              <FileName>svc_diagnostico.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\svc_diagnostico.h</FilePath>
+            </File>
+            <File>
+              <FileName>svc_diagnostico.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\svc_diagnostico.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -575,6 +605,16 @@
               <FileName>reserva_gpio_lpc2105.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\src_lpc\reserva_gpio_lpc2105.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wdt_lpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_lpc\hal_wdt_lpc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_irq_lpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_lpc\hal_irq_lpc.c</FilePath>
             </File>
           </Files>
         </Group>

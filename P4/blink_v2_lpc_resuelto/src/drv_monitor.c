@@ -19,12 +19,16 @@ void drv_monitor_marcar(uint32_t id){
 	switch(id){
 		case MONITOR1:
 			i=0;
+			break;
 		case MONITOR2:
 			i=1;
+			break;
 		case MONITOR3:
 			i=2;
+			break;
 		case MONITOR4:
 			i=3;
+			break;
 	}
 	hal_gpio_escribir(s_monitores[i],1); // Pone a 1 el GPIO correspondiente al monitor seleccionado
 }
@@ -35,12 +39,16 @@ void drv_monitor_desmarcar(uint32_t id){
 	switch(id){
 		case MONITOR1:
 			i=0;
+			break;
 		case MONITOR2:
 			i=1;
+			break;	
 		case MONITOR3:
 			i=2;
+			break;
 		case MONITOR4:
 			i=3;
+			break;
 	}
 	hal_gpio_escribir(s_monitores[i],0); // Pone a 0 el GPIO correspondiente al monitor seleccionado
 }

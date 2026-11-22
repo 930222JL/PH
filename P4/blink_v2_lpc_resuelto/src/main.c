@@ -28,6 +28,7 @@
 #include "drv_tiempo.h"
 #include "drv_consumo.h"
 #include "drv_monitor.h"
+#include "svc_alarmas.h"
 #include "svc_GE.h"
 #include "rt_GE.h"
 #include "drv_botones.h"
@@ -41,7 +42,7 @@
 static void blink_v1(LED_id_t id);
 static void blink_v2(LED_id_t id);
 
-static volatile bool pulsado=false;
+static volatile uint16_t pasoBCS;
 static volatile uint16_t counter_sequence[4]={1,3,2,4};
 
 /* *****************************************************************************
@@ -136,7 +137,7 @@ static void blink_v4(LED_id_t id) {
     /* Bucle principal: conmutar con temporizador */
     while (true) {
 				if(rt_FIFO_extraer(&EV_ID_evento,&EV_auxData,&EV_TS)){
-					if(ev_T_PERIODICO)drv_led_conmutar(id);
+					if(EV_ID_evento==ev_T_PERIODICO)drv_led_conmutar(id);
 				}else{
 					drv_consumo_esperar();
 				}
@@ -145,21 +146,20 @@ static void blink_v4(LED_id_t id) {
     }
 }
 
-static void pulsar(){
-	pulsado=true;
+static void pulsar(EVENTO_T ID_evento,uint32_t auxData){
+	if(auxData==counter_sequence[pasoBCS]){
+		drv_led_establecer(counter_sequence[pasoBCS],0);
+		pasoBCS++;
+		if(pasoBCS==4)pasoBCS=0;
+		drv_led_establecer(counter_sequence[pasoBCS],1);
+	}
 }
 
 static void bit_counter_strike(){
 	svc_GE_suscribir(ev_PULSAR_BOTON,0,pulsar);
-	uint16_t n=0;
-	while(1){
-		if(n>=4)n=0;
-		drv_led_establecer(counter_sequence[n],1);
-		while(!pulsado);
-		pulsado=false;
-		drv_led_establecer(counter_sequence[n],0);
-		n++;
-	}
+	pasoBCS=0;
+	drv_led_establecer(counter_sequence[pasoBCS],1);
+	rt_GE_lanzador();
 }
 
 /* *****************************************************************************
@@ -179,6 +179,9 @@ int main(void){
 	Num_Leds = drv_leds_iniciar();
 	drv_monitor_iniciar();
 	drv_consumo_iniciar(MONITOR3);
+	svc_alarma_iniciar(rt_FIFO_encolar);
+	rt_GE_iniciar();
+	drv_botones_iniciar(rt_FIFO_encolar);
 	
 	
 	if (Num_Leds > 0){
@@ -189,7 +192,9 @@ int main(void){
 			 */
 			//blink_v2((LED_id_t)2);
 			//blink_v3((LED_id_t)3);
-			blink_v4((LED_id_t)4);
+			//blink_v3_bis(3);
+			//blink_v4((LED_id_t)4);
+			bit_counter_strike();
 			//test();
     }
 

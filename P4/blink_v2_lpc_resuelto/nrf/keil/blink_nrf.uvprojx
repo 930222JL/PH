@@ -512,6 +512,36 @@
               <FileType>5</FileType>
               <FilePath>..\..\src\hal_ext_int.h</FilePath>
             </File>
+            <File>
+              <FileName>drv_watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\drv_watchdog.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_watchdog.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\drv_watchdog.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wdt.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_wdt.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_irq.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_irq.h</FilePath>
+            </File>
+            <File>
+              <FileName>svc_diagnostico.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\svc_diagnostico.c</FilePath>
+            </File>
+            <File>
+              <FileName>svc_diagnostico.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\svc_diagnostico.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -546,6 +576,16 @@
               <FileName>hal_ext_int_nrf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src_nrf\hal_ext_int_nrf.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_wdt_nrf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_nrf\hal_wdt_nrf.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_irq_nrf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_nrf\hal_irq_nrf.c</FilePath>
             </File>
           </Files>
         </Group>

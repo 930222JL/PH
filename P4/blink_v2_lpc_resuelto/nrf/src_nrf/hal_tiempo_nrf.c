@@ -7,6 +7,7 @@
  * Tiempo en ticks = vueltas * 2^32 + contador.
  */
 #include <nrf.h>
+#include "hal_irq.h"
 #include <stddef.h>
 #include "hal_tiempo.h"
 
@@ -61,17 +62,17 @@ static uint32_t leer_contador(void){
 /* lectura que para interrupciones, lee el contador y comprueba si salto interrupcion y no dio tiempo a servirla para contar la vuelta y servir la 
 interrupcion en la funcion, reactiva interrupciones y devuelve tiempo*/
 uint64_t hal_tiempo_actual_tick64(void) {
-	uint32_t primask = __get_PRIMASK();		//guardamos estado de las interrupciones
+	uint32_t estado = hal_irq_estado();		//guardamos estado de las interrupciones
 	uint32_t lo, hi;
 
-	__disable_irq();											// desactivamos interrupciones para no dejar la operacion a mitad
+	hal_irq_desactivar();											// desactivamos interrupciones para no dejar la operacion a mitad
 	lo = leer_contador();
 	hi = s_overflows_t1;
 	if (NRF_TIMER1->EVENTS_COMPARE[0] != 0 && lo < 0x80000000u) {	/*si ha saltado interrupcion y el valor de tick es menor que la mitad no se ha servido 
 																																la interrupcion*/
 		hi++;
 	}
-	__set_PRIMASK(primask);							// devolvemos las interrupciones al estado en el que estaban antes de desactivarlas
+	hal_irq_activar(estado);							// devolvemos las interrupciones al estado en el que estaban antes de desactivarlas
 
 	return (((uint64_t)hi) << 32) | lo;
 }

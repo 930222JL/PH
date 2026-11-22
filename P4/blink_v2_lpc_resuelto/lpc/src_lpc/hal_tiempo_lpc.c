@@ -4,6 +4,7 @@
  */
  
 #include <LPC210x.H>
+#include "hal_irq.h"
 #include "hal_tiempo.h"
 
 #include <stdbool.h>  // si usas bool/true/false
@@ -48,16 +49,19 @@ void hal_tiempo_iniciar_tick(hal_tiempo_info_t *out_info) {
 
 /* Lectura 64-bit sin carrera: lee TC, luego overflows, re-lee TC si hizo wrap */
 uint64_t hal_tiempo_actual_tick64(void) {
+		uint32_t estado = hal_irq_estado();
     uint32_t hi1, lo1, hi2, lo2;
-
+		hal_irq_desactivar();
     lo1 = T1TC;
     hi1 = s_overflows_t1;
     lo2 = T1TC;
     if (lo2 < lo1) {
         /* ocurrió wrap entre lecturas: usar hi actualizado */
         hi2 = s_overflows_t1;
+				hal_irq_activar(estado);
         return (((uint64_t)hi2) * ((uint64_t)COUNTER_MAX + 1u)) + lo2;
     }
+		hal_irq_activar(estado);
     return (((uint64_t)hi1) * ((uint64_t)COUNTER_MAX + 1u)) + lo2;
 }
 

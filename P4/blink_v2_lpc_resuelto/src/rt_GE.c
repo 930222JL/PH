@@ -4,8 +4,10 @@
 #include "rt_fifo.h"
 #include "rt_evento_t.h"
 #include "drv_consumo.h"
+#include "drv_watchdog.h"
 #include "drv_monitor.h"
 #include "board.h"
+#include <nrf.h>
 #include <stddef.h>
 
 typedef struct{
@@ -15,12 +17,12 @@ typedef struct{
 
 static volatile suscripcion_t suscripciones[EVENT_TYPES][rt_GE_MAX_SUSCRITOS];
 
-void overflow(){
+static void overflow(){
 	drv_monitor_marcar(MONITOR4);
 	while(1);
 }
 
-void rt_GE_iniciar(){
+void rt_GE_iniciar(void){
 	for(uint16_t i=0;i<EVENT_TYPES;i++){
 			for(uint16_t j=0;j<rt_GE_MAX_SUSCRITOS;j++){
 				suscripciones[i][j].f=NULL;
@@ -32,7 +34,7 @@ void rt_GE_iniciar(){
 	svc_alarma_activar(svc_alarma_codificar(false,10000,0),ev_INACTIVIDAD,0);
 }
 
-void rt_GE_lanzador(){
+void rt_GE_lanzador(void){
 	EVENTO_T id;
 	uint32_t data;
 	Tiempo_us_t t;
@@ -44,6 +46,10 @@ void rt_GE_lanzador(){
 				if(f==NULL) break;
 				f(id,data);
 			}
+			uint32_t primask = __get_PRIMASK();
+			__disable_irq();
+			drv_watchdog_alimentar();
+			__set_PRIMASK(primask);
 		}else{
 			drv_consumo_esperar();
 		}
@@ -92,5 +98,5 @@ void svc_GE_cancelar(EVENTO_T ID_evento, svc_GE_callback_t f_callback){
 		n++;
 	}
 }
-	
+
 	

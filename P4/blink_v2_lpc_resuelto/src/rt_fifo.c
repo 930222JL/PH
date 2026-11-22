@@ -1,8 +1,10 @@
 #include "rt_fifo.h"
 #include <stddef.h>
+#include "hal_irq.h"
+#include "svc_diagnostico.h"
+#include <stdint.h>
 #include <nrf.h>
 #include "drv_tiempo.h"
-#include "drv_monitor.h"
 #include "board.h"      
 
 // Estructura que define la información que almacena cada evento en la cola
@@ -25,9 +27,9 @@ EVENTO rt_FIFO[RT_FIFO_TAM];
 uint32_t total_por_evento[EVENT_TYPES];
 
 // Inicializa la estructura de la cola FIFO, sus punteros y estadísticas
-void rt_FIFO_inicializar(uint32_t monitor_overflow) {
-	s_monitor = monitor_overflow;
-	drv_monitor_desmarcar(s_monitor); // Asegura que no haya marca de error de overflow al inicio
+void rt_FIFO_inicializar() {
+	s_monitor = svc_diagnostico_reservar();
+	svc_diagnostico_limpiar(s_monitor); // Asegura que no haya marca de error de overflow al inicio
 
 	// Reinicia todos los índices y contadores
 	siguiente_a_escribir = siguiente_a_tratar = pendientes = total_eventos = 0;
@@ -49,12 +51,12 @@ void rt_FIFO_inicializar(uint32_t monitor_overflow) {
 void rt_FIFO_encolar(EVENTO_T ID_evento, uint32_t auxData) {
 	// Guarda el estado actual del registro PRIMASK y deshabilita interrupciones
 	// (Sección crítica para evitar carreras ya que se llama desde ISR y main)
-	uint32_t primask = __get_PRIMASK();
-	__disable_irq();
+	uint32_t estado = hal_irq_estado();
+	hal_irq_desactivar();
 
 	// Manejo de desbordamiento: si la cola está llena, marca el error en el monitor y bloquea el sistema
 	if (pendientes >= RT_FIFO_TAM) {
-		drv_monitor_marcar(s_monitor);
+		svc_diagnostico_senyalar(s_monitor);
 		while (1); // Bucle infinito tras un desbordamiento crítico de la FIFO
 	}
 
@@ -74,15 +76,15 @@ void rt_FIFO_encolar(EVENTO_T ID_evento, uint32_t auxData) {
 	}
 
 	// Restaura el estado previo de las interrupciones
-	__set_PRIMASK(primask);
+	hal_irq_activar(estado);
 }
 
 // Extrae el evento más antiguo de la cola FIFO (devuelve >0 si había elementos)
 uint8_t rt_FIFO_extraer(EVENTO_T *ID_evento, uint32_t *auxData, Tiempo_us_t *TS) {
 	// Guarda el estado previo de las interrupciones y entra en sección crítica
-	uint32_t primask = __get_PRIMASK();
+	uint32_t estado = hal_irq_estado();
 	uint8_t hay;
-	__disable_irq();
+	hal_irq_desactivar();
 
 	hay = (uint8_t)pendientes; // Guarda la cantidad de elementos pendientes antes de extraer
 
@@ -98,7 +100,7 @@ uint8_t rt_FIFO_extraer(EVENTO_T *ID_evento, uint32_t *auxData, Tiempo_us_t *TS)
 	}
 
 	// Restaura el estado de las interrupciones
-	__set_PRIMASK(primask);
+	hal_irq_desactivar(estado);
 	return hay;
 }
 
@@ -107,10 +109,4 @@ uint32_t rt_FIFO_estadisticas(EVENTO_T ID_evento) {
 	if (ID_evento == ev_VOID) return total_eventos;            // Devuelve el global acumulado
 	if (ID_evento < EVENT_TYPES) return total_por_evento[ID_evento]; // Devuelve el acumulado de ese evento
 	return 0;                                                   // ID fuera de rango
-}
-
-uint32_t rt_FIFO_estadisticas(EVENTO_T ID_evento){
-	if(ID_evento == ev_VOID) return total_eventos;
-	if(ID_evento < EVENT_TYPES) return total_por_evento[ID_evento];
-	return 0;
 }

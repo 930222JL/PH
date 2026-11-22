@@ -5,9 +5,9 @@
 
 #define rt_GE_MAX_SUSCRITOS 4
 
-void rt_GE_iniciar();
+void rt_GE_iniciar(void);
 
-void rt_GE_lanzador();
+void rt_GE_lanzador(void);
 
 void rt_GE_actualizar(EVENTO_T ID_evento, uint32_t auxiliar);
 

@@ -2,11 +2,10 @@
 #define RT_FIFO_H
 #include "rt_evento_t.h"
 #include "drv_tiempo.h"
-#include <stdint.h>
 
 #define RT_FIFO_TAM 32u
 
-void rt_FIFO_inicializar(uint32_t monitor_overflow);
+void rt_FIFO_inicializar(void);
 
 void rt_FIFO_encolar(EVENTO_T ID_evento, uint32_t auxData);
 
