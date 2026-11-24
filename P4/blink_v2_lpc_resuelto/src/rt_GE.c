@@ -31,13 +31,13 @@ void rt_GE_iniciar(void){
 	}
 	svc_GE_suscribir(ev_INACTIVIDAD,0,rt_GE_actualizar);
 	svc_GE_suscribir(ev_PULSAR_BOTON,0,rt_GE_actualizar);
-	svc_alarma_activar(svc_alarma_codificar(false,10000,0),ev_INACTIVIDAD,0);
 }
 
 void rt_GE_lanzador(void){
 	EVENTO_T id;
 	uint32_t data;
 	Tiempo_us_t t;
+	svc_alarma_activar(svc_alarma_codificar(false,15000,0),ev_INACTIVIDAD,0);
 	
 	while(1){
 		if(rt_FIFO_extraer(&id,&data,&t)){
@@ -46,10 +46,7 @@ void rt_GE_lanzador(void){
 				if(f==NULL) break;
 				f(id,data);
 			}
-			uint32_t estado =hal_irq_estado() ;
-			hal_irq_desactivar();
 			drv_watchdog_alimentar();
-			hal_irq_activar(estado);
 		}else{
 			drv_consumo_esperar();
 		}

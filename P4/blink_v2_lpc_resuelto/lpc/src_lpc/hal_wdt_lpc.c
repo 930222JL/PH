@@ -5,6 +5,7 @@
  * ****************************************************************************/
 #include <LPC210x.h>
 #include <stdint.h>
+#include "hal_irq.h"
 #include "hal_wdt.h"
 
 #define HAL_WDT_PCLK_HZ     15000000u   /* <-- AJUSTAR a tu PCLK */
@@ -29,8 +30,9 @@ void hal_wdt_alimentar(void){
 	 * asi se restaura el nivel que habia al entrar (no se habilita siempre).
 	 * Si ya tienes el modulo de secciones criticas, sustituye estas lineas
 	 * por sus funciones de entrar/salir. */
-	int irq_estaban_deshabilitadas = __disable_irq();
+	int irq_estaban_deshabilitadas = hal_irq_estado();
+	hal_irq_desactivar();
 	WDFEED = WDFEED_PRIMERA;
 	WDFEED = WDFEED_SEGUNDA;
-	if(!irq_estaban_deshabilitadas) __enable_irq();
+	if(!irq_estaban_deshabilitadas) hal_irq_activar(irq_estaban_deshabilitadas);
 }

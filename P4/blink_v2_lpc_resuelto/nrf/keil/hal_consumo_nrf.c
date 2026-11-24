@@ -1,10 +1,10 @@
 #include "board.h"
 #include <nrf.h>
 #include <stdint.h>
-#include "hal_gpio.h"
+#include "drv_leds.h"
 #include "hal_consumo.h"
 
-static volatile uint32_t leds[LEDS_NUMBER]=LEDS_LIST;
+static volatile uint32_t leds[LEDS_NUMBER]={1,2,3,4};
 
 void hal_consumo_iniciar(void){}
 	
@@ -14,7 +14,7 @@ void hal_consumo_esperar(void){
 	
 void hal_consumo_dormir(void){
 	for(uint16_t i=0;i<LEDS_NUMBER;i++){
-		hal_gpio_escribir(leds[i],1);
+		drv_led_establecer(leds[i],LED_OFF);
 	}
 	NRF_POWER->SYSTEMOFF=POWER_SYSTEMOFF_SYSTEMOFF_Enter;
 	

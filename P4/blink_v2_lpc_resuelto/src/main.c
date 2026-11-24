@@ -30,6 +30,7 @@
 #include "drv_monitor.h"
 #include "svc_alarmas.h"
 #include "svc_GE.h"
+#include "svc_diagnostico.h"
 #include "rt_GE.h"
 #include "drv_botones.h"
 #include "drv_watchdog.h"
@@ -152,10 +153,10 @@ static volatile uint16_t counter_sequence[3]={1,3,2};
 
 static void pulsar(EVENTO_T ID_evento,uint32_t auxData){
 	if(auxData==counter_sequence[pasoBCS]){
-		drv_led_establecer(counter_sequence[pasoBCS],0);
+		drv_led_establecer(counter_sequence[pasoBCS],LED_OFF);
 		pasoBCS++;
 		if(pasoBCS==3)pasoBCS=0;
-		drv_led_establecer(counter_sequence[pasoBCS],1);
+		drv_led_establecer(counter_sequence[pasoBCS],LED_ON);
 	}
 }
 
@@ -163,7 +164,7 @@ static void bit_counter_strike(){
 	rt_FIFO_inicializar();
 	svc_GE_suscribir(ev_PULSAR_BOTON,0,pulsar);
 	pasoBCS=0;
-	drv_led_establecer(counter_sequence[pasoBCS],1);
+	drv_led_establecer(counter_sequence[pasoBCS],LED_ON);
 	rt_GE_lanzador();
 }
 
@@ -173,10 +174,10 @@ static volatile uint16_t counter_sequence[4]={1,3,2,4};
 
 static void pulsar(EVENTO_T ID_evento,uint32_t auxData){
 	if(auxData==counter_sequence[pasoBCS]){
-		drv_led_establecer(counter_sequence[pasoBCS],0);
+		drv_led_establecer(counter_sequence[pasoBCS],LED_OFF);
 		pasoBCS++;
 		if(pasoBCS==4)pasoBCS=0;
-		drv_led_establecer(counter_sequence[pasoBCS],1);
+		drv_led_establecer(counter_sequence[pasoBCS],LED_ON);
 	}
 }
 
@@ -184,7 +185,7 @@ static void bit_counter_strike(){
 	rt_FIFO_inicializar();
 	svc_GE_suscribir(ev_PULSAR_BOTON,0,pulsar);
 	pasoBCS=0;
-	drv_led_establecer(counter_sequence[pasoBCS],1);
+	drv_led_establecer(counter_sequence[pasoBCS],LED_ON);
 	rt_GE_lanzador();
 }
 
@@ -205,11 +206,12 @@ int main(void){
 	/* Configurar LEDs (IDs válidos: 1..num_leds) */
 	Num_Leds = drv_leds_iniciar();
 	drv_monitor_iniciar();
+	svc_diagnostico_iniciar();
 	drv_consumo_iniciar();
 	rt_GE_iniciar();
 	svc_alarma_iniciar(rt_FIFO_encolar);
 	drv_botones_iniciar(rt_FIFO_encolar);
-	drv_watchdog_iniciar(15000);
+	drv_watchdog_iniciar(20000);
 	
 	
 	
@@ -221,9 +223,10 @@ int main(void){
 			 */
 			//blink_v2((LED_id_t)2);
 			//blink_v3((LED_id_t)3);
-			//blink_v3_bis(3);
+			blink_v3_bis(3);
 			//blink_v4((LED_id_t)4);
-			bit_counter_strike();
+			//bit_counter_strike();
+			//drv_watchdog_probar_bloqueo();
 			//test();
     }
 
