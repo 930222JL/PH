@@ -6,8 +6,8 @@
 #include "drv_consumo.h"
 #include "drv_watchdog.h"
 #include "drv_monitor.h"
+#include "hal_irq.h"
 #include "board.h"
-#include <nrf.h>
 #include <stddef.h>
 
 typedef struct{
@@ -46,10 +46,10 @@ void rt_GE_lanzador(void){
 				if(f==NULL) break;
 				f(id,data);
 			}
-			uint32_t primask = __get_PRIMASK();
-			__disable_irq();
+			uint32_t estado =hal_irq_estado() ;
+			hal_irq_desactivar();
 			drv_watchdog_alimentar();
-			__set_PRIMASK(primask);
+			hal_irq_activar(estado);
 		}else{
 			drv_consumo_esperar();
 		}

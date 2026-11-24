@@ -10,15 +10,16 @@ uint32_t hal_irq_estado(void){
 }
 
 void hal_irq_desactivar(void){
+		uint32_t estado,aux;
 	__asm{
-		MRS r0, CPSR
-		ORR r0,r0,#0x80
-		MSR CPSR, r0
+		MRS estado, CPSR
+		ORR aux,estado,#0x80
+		MSR CPSR_cxsf, aux
 	}
 }
 
 void hal_irq_activar(uint32_t estado){
 	__asm{
-		MSR CPSR, estado
+		MSR CPSR_cxsf, estado
 	}
 }

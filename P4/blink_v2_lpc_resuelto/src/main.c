@@ -32,6 +32,7 @@
 #include "svc_GE.h"
 #include "rt_GE.h"
 #include "drv_botones.h"
+#include "drv_watchdog.h"
 #include "rt_fifo.h"
 #include "rt_fifo_test.h"
 
@@ -43,7 +44,6 @@ static void blink_v1(LED_id_t id);
 static void blink_v2(LED_id_t id);
 
 static volatile uint16_t pasoBCS;
-static volatile uint16_t counter_sequence[4]={1,3,2,4};
 
 /* *****************************************************************************
  * BLINK v1: parpadeo de un LED conmutando on/off.
@@ -126,7 +126,7 @@ static void blink_v4(LED_id_t id) {
 		uint32_t EV_auxData;
 		Tiempo_us_t EV_TS;
 		
-    rt_FIFO_inicializar(MONITOR4);
+    rt_FIFO_inicializar();
 	
 		/* Encender LED inicial */
     drv_led_establecer(id, LED_ON);
@@ -146,6 +146,31 @@ static void blink_v4(LED_id_t id) {
     }
 }
 
+#if defined (LPC2105_simulador)
+
+static volatile uint16_t counter_sequence[3]={1,3,2};
+
+static void pulsar(EVENTO_T ID_evento,uint32_t auxData){
+	if(auxData==counter_sequence[pasoBCS]){
+		drv_led_establecer(counter_sequence[pasoBCS],0);
+		pasoBCS++;
+		if(pasoBCS==3)pasoBCS=0;
+		drv_led_establecer(counter_sequence[pasoBCS],1);
+	}
+}
+
+static void bit_counter_strike(){
+	rt_FIFO_inicializar();
+	svc_GE_suscribir(ev_PULSAR_BOTON,0,pulsar);
+	pasoBCS=0;
+	drv_led_establecer(counter_sequence[pasoBCS],1);
+	rt_GE_lanzador();
+}
+
+#else
+
+static volatile uint16_t counter_sequence[4]={1,3,2,4};
+
 static void pulsar(EVENTO_T ID_evento,uint32_t auxData){
 	if(auxData==counter_sequence[pasoBCS]){
 		drv_led_establecer(counter_sequence[pasoBCS],0);
@@ -156,12 +181,14 @@ static void pulsar(EVENTO_T ID_evento,uint32_t auxData){
 }
 
 static void bit_counter_strike(){
+	rt_FIFO_inicializar();
 	svc_GE_suscribir(ev_PULSAR_BOTON,0,pulsar);
 	pasoBCS=0;
 	drv_led_establecer(counter_sequence[pasoBCS],1);
 	rt_GE_lanzador();
 }
 
+#endif
 /* *****************************************************************************
  * MAIN, Programa principal.
  * para la primera sesion se debe usar la funcion de blink_v1 sin temporizadores
@@ -178,10 +205,12 @@ int main(void){
 	/* Configurar LEDs (IDs válidos: 1..num_leds) */
 	Num_Leds = drv_leds_iniciar();
 	drv_monitor_iniciar();
-	drv_consumo_iniciar(MONITOR3);
-	svc_alarma_iniciar(rt_FIFO_encolar);
+	drv_consumo_iniciar();
 	rt_GE_iniciar();
+	svc_alarma_iniciar(rt_FIFO_encolar);
 	drv_botones_iniciar(rt_FIFO_encolar);
+	drv_watchdog_iniciar(15000);
+	
 	
 	
 	if (Num_Leds > 0){

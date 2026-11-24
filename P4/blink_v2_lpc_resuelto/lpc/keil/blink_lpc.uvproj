@@ -616,6 +616,16 @@
               <FileType>1</FileType>
               <FilePath>..\src_lpc\hal_irq_lpc.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_ext_int_lpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_lpc\hal_ext_int_lpc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_consumo_lpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_lpc\hal_consumo_lpc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

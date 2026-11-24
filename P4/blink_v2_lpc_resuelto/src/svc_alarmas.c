@@ -47,7 +47,7 @@ uint32_t svc_alarma_codificar(bool periodico,Tiempo_ms_t retardo_ms,uint8_t flag
 void svc_alarma_activar(uint32_t alarma_flags,EVENTO_T ID_evento,uint32_t auxData){
 	uint32_t tiempo=alarma_flags&ALARMA_RETARDO_MASK;
 	bool activa= tiempo!=0;
-	int libre=0;
+	int libre=-1;
 	uint16_t n=0;
 	while(n<svc_ALARMAS_MAX){
 		if(s_alarmas[n].activa){
@@ -60,15 +60,15 @@ void svc_alarma_activar(uint32_t alarma_flags,EVENTO_T ID_evento,uint32_t auxDat
 				s_alarmas[n].auxData=auxData;
 				return;
 			}
-		}else if(libre==0){
+		}else if(libre==-1){
 			libre=n;
 		}
 		n++;
 	}
-	if(n==svc_ALARMAS_MAX) overflow();
+	if(n==svc_ALARMAS_MAX && libre==-1) overflow();
 	s_alarmas[libre].ID_evento=ID_evento;
 	s_alarmas[libre].activa=activa;
-	s_alarmas[libre].tiempo=tiempo;
+	s_alarmas[libre].tiempo=tiempo/svc_PERIODO_ALARMA;
 	s_alarmas[libre].contador=0;
 	s_alarmas[libre].flags=(alarma_flags>>ALARMA_FLAGS_POS)&ALARMA_FLAGS_MASK;
 	s_alarmas[libre].periodica=alarma_flags >> ALARMA_FLAGS_POS;

@@ -6,7 +6,7 @@
 #include "drv_tiempo.h"
 
 #define svc_ALARMAS_MAX 4
-#define svc_PERIODO_ALARMA 20
+#define svc_PERIODO_ALARMA 2
 
 typedef void (*svc_alarma_callback_t)(EVENTO_T ID_evento,uint32_t auxData);
 

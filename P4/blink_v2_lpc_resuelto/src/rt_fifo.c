@@ -3,7 +3,6 @@
 #include "hal_irq.h"
 #include "svc_diagnostico.h"
 #include <stdint.h>
-#include <nrf.h>
 #include "drv_tiempo.h"
 #include "board.h"      
 
@@ -100,7 +99,7 @@ uint8_t rt_FIFO_extraer(EVENTO_T *ID_evento, uint32_t *auxData, Tiempo_us_t *TS)
 	}
 
 	// Restaura el estado de las interrupciones
-	hal_irq_desactivar(estado);
+	hal_irq_activar(estado);
 	return hay;
 }
 

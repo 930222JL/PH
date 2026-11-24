@@ -12,7 +12,7 @@ static uint32_t test_circular(void) {
 	Tiempo_us_t t_anterior = 0; // Almacena el timestamp del evento anterior para verificar monotonicidad
 	
 	// Inicializa la cola FIFO usando el monitor asignado (MONITOR4)
-	rt_FIFO_inicializar(MONITOR4);
+	rt_FIFO_inicializar();
 	
 	// PRUEBA 1: Encolar y extraer alternadamente múltiples veces (superando el tamaño máximo del buffer)
 	for (uint16_t i = 0; i < 5 * RT_FIFO_TAM; i++) {
@@ -53,7 +53,7 @@ static uint32_t test_circular(void) {
 
 // Prueba el comportamiento ante desbordamiento de la FIFO (overflow)
 static uint32_t test_overflow(void) {
-	rt_FIFO_inicializar(MONITOR4);
+	rt_FIFO_inicializar();
 	
 	// Intenta encolar RT_FIFO_TAM + 1 elementos para provocar el desbordamiento.
 	// La función rt_FIFO_encolar debería entrar en bucle infinito/assert al intentar guardar el último elemento.
