@@ -21,14 +21,16 @@ typedef struct{
 }alarma;
 	
 
-static volatile svc_alarma_callback_t s_cb;
-static volatile alarma s_alarmas[svc_ALARMAS_MAX];
+static volatile svc_alarma_callback_t s_cb;	/* Callback para encolar eventos en FIFO */
+static volatile alarma s_alarmas[svc_ALARMAS_MAX];	/* Pool estatico de alarmas */
 
+/* Bloquea el sistema marcando el monitor 4 si se supera el maximo de alarmas simultaneas */
 void overflow(){
 	drv_monitor_marcar(MONITOR4);
 	while(1);
 }
 
+/* Inicializa el pool de alarmas y arranca el tick base hardware (svc_PERIODO_ALARMA) */
 void svc_alarma_iniciar(svc_alarma_callback_t cb_a_llamar){
 	s_cb=cb_a_llamar;
 	for(uint16_t i=0;i<svc_ALARMAS_MAX;i++){
@@ -38,20 +40,24 @@ void svc_alarma_iniciar(svc_alarma_callback_t cb_a_llamar){
 	drv_tiempo_periodico_ms(svc_PERIODO_ALARMA,s_cb,ev_A_PERIODICA);
 }
 
+/* Empaqueta periodicidad, flags y retardo en una palabra de 32 bits */
 uint32_t svc_alarma_codificar(bool periodico,Tiempo_ms_t retardo_ms,uint8_t flags){
 	return ((uint32_t)(periodico ? 1u : 0u) << ALARMA_PERIODICA_POS)
 	     | ((uint32_t)(flags & ALARMA_FLAGS_MASK) << ALARMA_FLAGS_POS)
 	     | (retardo_ms & ALARMA_RETARDO_MASK);
 }
 
+/* Crea, reprograma o cancela (si retardo == 0) una alarma asociada a un ID_evento */
 void svc_alarma_activar(uint32_t alarma_flags,EVENTO_T ID_evento,uint32_t auxData){
 	uint32_t tiempo=alarma_flags&ALARMA_RETARDO_MASK;
 	bool activa= tiempo!=0;
 	int libre=-1;
 	uint16_t n=0;
+	/* Busca si ya existe una alarma activa para ese evento o localiza un hueco libre */
 	while(n<svc_ALARMAS_MAX){
 		if(s_alarmas[n].activa){
 			if(s_alarmas[n].ID_evento==ID_evento){
+				/* Reprograma o cancela la alarma existente */
 				s_alarmas[n].activa=activa;
 				s_alarmas[n].contador=0;
 				s_alarmas[n].tiempo=tiempo/svc_PERIODO_ALARMA;
@@ -65,7 +71,9 @@ void svc_alarma_activar(uint32_t alarma_flags,EVENTO_T ID_evento,uint32_t auxDat
 		}
 		n++;
 	}
+	/* Si no hay huecos disponibles, dispara error de desbordamiento */
 	if(n==svc_ALARMAS_MAX && libre==-1) overflow();
+	/* Asigna la nueva alarma en el primer slot libre encontrado */
 	s_alarmas[libre].ID_evento=ID_evento;
 	s_alarmas[libre].activa=activa;
 	s_alarmas[libre].tiempo=tiempo/svc_PERIODO_ALARMA;
@@ -75,6 +83,7 @@ void svc_alarma_activar(uint32_t alarma_flags,EVENTO_T ID_evento,uint32_t auxDat
 	s_alarmas[libre].auxData=auxData;
 }
 
+/* Ejecutada en cada tick periodico (ev_A_PERIODICA): incrementa contadores y dispara alarmas vencidas */
 void svc_alarma_actualizar(EVENTO_T evento,uint32_t aux){
 	for(uint16_t i=0;i<svc_ALARMAS_MAX;i++){
 		if(!s_alarmas[i].activa)continue;
@@ -87,7 +96,7 @@ void svc_alarma_actualizar(EVENTO_T evento,uint32_t aux){
 			}else{
 				s_alarmas[i].activa=false;
 			}
-			if(s_cb) s_cb(id,data);
+			if(s_cb) s_cb(id,data);	/* Encola el evento vencido */
 		}
 	}
 }
