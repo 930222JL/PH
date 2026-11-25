@@ -3,14 +3,15 @@
 #include <LPC210x.H>
 #include <stdbool.h>
 
-#define NUM_EINT 3
+#define NUM_EINT 3	// Numero de lineas de interrupcion externa soportadas 
 
-static volatile uint32_t pin_vic[NUM_EINT]={14,15,16};
-static volatile uint32_t pin_eint[NUM_EINT]={16,14,15};
+static volatile uint32_t pin_vic[NUM_EINT]={14,15,16};	// Canales VIC para EINT0, EINT1, EINT2 
+static volatile uint32_t pin_eint[NUM_EINT]={16,14,15};	// Pines GPIO fisicos asociados (P0.16, P0.14, P0.15) 
 static volatile bool configurado[NUM_EINT];
 
 static void (*f_cb)(EVENTO_T ID_evento,uint32_t pin);
 
+/* ISR para EINT0 (P0.16): deshabilita interrupcion, limpia flag y notifica al driver. */
 void eint0_isr(void) __irq{
 	VICIntEnClr=(1 << pin_vic[0]);
 	EXTINT=(1U<<0);
@@ -18,6 +19,7 @@ void eint0_isr(void) __irq{
 	VICVectAddr=0;
 }
 
+/* ISR para EINT1 (P0.14). */
 void eint1_isr(void) __irq{
 	VICIntEnClr=(1 << pin_vic[1]);
 	EXTINT=(1U<<1);
@@ -25,6 +27,7 @@ void eint1_isr(void) __irq{
 	VICVectAddr=0;
 }
 
+/* ISR para EINT2 (P0.15). */
 void eint2_isr(void) __irq{
 	VICIntEnClr=(1 << pin_vic[2]);
 	EXTINT=(1U<<2);
@@ -32,6 +35,7 @@ void eint2_isr(void) __irq{
 	VICVectAddr=0;
 }
 
+/* Inicializa las 3 lineas de interrupcion externa y registra el callback. */
 void hal_ext_int_iniciar(void (*f_callback_isr)(EVENTO_T ID_evento,uint32_t pin)){
 	f_cb=f_callback_isr;
 	for(uint16_t i=0;i<NUM_EINT;i++){
@@ -40,6 +44,7 @@ void hal_ext_int_iniciar(void (*f_callback_isr)(EVENTO_T ID_evento,uint32_t pin)
 	}
 }
 
+/* Configura la funcion alternativa del pin (PINSEL), el slot del VIC y el despertar (EXTWAKE). */
 void hal_ext_int_config_pin(uint32_t pin){
 	switch(pin){
 		case 0:
@@ -70,9 +75,11 @@ void hal_ext_int_config_pin(uint32_t pin){
 	EXTWAKE=(1U<<pin);
 	VICIntEnable=(1U<<pin_vic[pin]);
 }
+/* Deshabilita la interrupcion externa en el VIC. */
 void hal_ext_int_deshabilitar(uint32_t pin){
 	VICIntEnClr=(1U<<pin);
 }
+/* Limpia el flag externo y habilita la interrupcion en el VIC. */
 void hal_ext_int_habilitar(uint32_t pin){
 	EXTINT=(1U<<pin_vic[pin]);
 	VICIntEnable=(1U<<pin);
