@@ -35,10 +35,11 @@ typedef struct{
 	bool salida;
 } boton;
 
-static void (*f_cb)(EVENTO_T ID_evento,uint32_t auxData);
+static void (*f_cb)(EVENTO_T ID_evento,uint32_t auxData);	// Callback para encolar eventos en FIFO 
 static volatile boton botones[BOTONES];
 static uint32_t pines[BOTONES]=LISTA_BOTONES;
 
+/* Inicializa las estructuras de los botones, la HAL de interrupciones y se suscribe a eventos. */
 void drv_botones_iniciar(void (*cb_a_llamar)(EVENTO_T ID_evento,uint32_t auxData)){
 	f_cb=cb_a_llamar;
 	for(uint32_t i=0;i<BOTONES;i++){
@@ -55,6 +56,7 @@ void drv_botones_iniciar(void (*cb_a_llamar)(EVENTO_T ID_evento,uint32_t auxData
 	svc_GE_suscribir(ev_BOTON_REBOTES,0,drv_botones_actualizar);
 }
 
+/* Callback ejecutado desde la ISR cuando se pulsa un boton: deshabilita su IRQ y encola el evento. */
 void drv_botones_pulsar_boton(EVENTO_T ID_evento,uint32_t pin){
 	hal_ext_int_deshabilitar(pin);
 	uint16_t n=0;
@@ -68,9 +70,11 @@ void drv_botones_pulsar_boton(EVENTO_T ID_evento,uint32_t pin){
 	}
 }
 
+/* Maquina de estados anti-rebote ejecutada en contexto de usuario desde el gestor de eventos. */
 void drv_botones_actualizar(EVENTO_T ID_evento,uint32_t auxData){
 	switch(ID_evento){
 		case ev_PULSAR_BOTON:
+			/* Inicia el retardo de muestreo (10 ms) para filtrar rebotes iniciales */
 			for(uint16_t i=0;i<BOTONES;i++){
 				if(botones[i].pulsado && botones[i].interrupciones){
 					botones[i].interrupciones=false;
@@ -80,11 +84,14 @@ void drv_botones_actualizar(EVENTO_T ID_evento,uint32_t auxData){
 			break;
 		
 		case ev_BOTON_MUESTREO:
+			/* Comprueba periodicamente si el boton sigue presionado o ya se solto */
 			for(uint16_t i=0;i<BOTONES;i++){
 				if(botones[i].pulsado && !botones[i].interrupciones){
 					if(hal_gpio_leer(botones[i].pin)){
+						/* Sigue pulsado: reprograma muestreo cada 10 ms */
 						svc_alarma_activar(svc_alarma_codificar(true,10,0),ev_BOTON_MUESTREO,0);
 					}else{
+						/* Se ha soltado: cancela muestreo y espera 10 ms por rebotes de liberacion */
 						svc_alarma_activar(0,ev_BOTON_MUESTREO,0);
 						botones[i].salida=true;
 						svc_alarma_activar(svc_alarma_codificar(false,10,0),ev_BOTON_REBOTES,0);
@@ -94,6 +101,7 @@ void drv_botones_actualizar(EVENTO_T ID_evento,uint32_t auxData){
 			break;
 			
 		case ev_BOTON_REBOTES:
+			/* Finalizado el tiempo de estabilizacion, resetea estado y reactiva la interrupcion */
 			for(uint16_t i=0;i<BOTONES;i++){
 				if(botones[i].salida){
 					botones[i].salida=false;
@@ -108,6 +116,7 @@ void drv_botones_actualizar(EVENTO_T ID_evento,uint32_t auxData){
 			break;
 	}
 }
+
 
 
 		
