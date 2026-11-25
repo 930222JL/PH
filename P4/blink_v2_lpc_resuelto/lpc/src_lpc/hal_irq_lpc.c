@@ -1,6 +1,7 @@
 #include "hal_irq.h"
 #include "board.h"
 
+/* Lee y devuelve el valor actual del registro CPSR. */
 uint32_t hal_irq_estado(void){
 	uint32_t estado;
 	__asm{
@@ -9,6 +10,7 @@ uint32_t hal_irq_estado(void){
 	return estado;
 }
 
+/* Pone a 1 el bit I (0x80) del CPSR para enmascarar (desactivar) las IRQ. */
 void hal_irq_desactivar(void){
 		uint32_t estado,aux;
 	__asm{
@@ -18,6 +20,7 @@ void hal_irq_desactivar(void){
 	}
 }
 
+/* Restaura el registro CPSR completo al estado guardado previamente. */
 void hal_irq_activar(uint32_t estado){
 	__asm{
 		MSR CPSR_cxsf, estado
